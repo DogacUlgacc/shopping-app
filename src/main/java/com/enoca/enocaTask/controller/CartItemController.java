@@ -1,6 +1,7 @@
 package com.enoca.enocaTask.controller;
 
 import com.enoca.enocaTask.dto.CartItemDto;
+import com.enoca.enocaTask.dto.CartItemUpdateDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.CartItem;
 import com.enoca.enocaTask.entity.Product;
@@ -9,8 +10,6 @@ import com.enoca.enocaTask.service.CartService;
 import com.enoca.enocaTask.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,52 +25,85 @@ private final CartService cartService;
         this.cartService = cartService;
     }
 
-/*    @GetMapping
-    public ResponseEntity<List<CartItem>> getAllCartItems() {
-        List<CartItem> cartItems = cartItemService.getAllCartItems();
-        return ResponseEntity.ok(cartItems);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CartItem> getCartItemById(@PathVariable Long id) {
-        Optional<CartItem> cartItem = cartItemService.getCartItemById(id);
-        return cartItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }*/
-
     @PostMapping("/add")
     public ResponseEntity<CartItem> AddProductToCart(@RequestBody CartItemDto cartItemDto) {
-        CartItem cartItem = new CartItem();
-        Product product =  productService.getProductById(cartItemDto.getProductId());
+        Product product = productService.getProductById(cartItemDto.getProductId());
         Cart cart = cartService.getCartById(cartItemDto.getCartId());
         double price = cartItemDto.getQuantity() * product.getPrice();
 
+        CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
 
-        cartItem.setProduct(product);
-        cartItem.setQuantity(cartItemDto.getQuantity());
-        cartItem.setPrice(price);
-        cartItem.setCart(cart);
-        CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
+        if (existingCartItem != null) {
+            // Eğer varsa update et
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
+            existingCartItem.setPrice(existingCartItem.getPrice() + price);
+            CartItem savedCartItem = cartItemService.saveCartItem(existingCartItem);
 
-        cart.setTotalPrice(cart.getTotalPrice() + price);
-        cartService.addCart(cart);
+            cart.setTotalPrice(cart.getTotalPrice() + price);
+            cartService.addCart(cart);
 
-        return ResponseEntity.ok(savedCartItem);
-    }
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CartItem> updateCartItem(@PathVariable Long id, @RequestBody CartItem cartItemDetails) {
-        Optional<CartItem> cartItem = cartItemService.getCartItemById(id);
-        if (cartItem.isPresent()) {
-            CartItem existingCartItem = cartItem.get();
-            existingCartItem.setQuantity(cartItemDetails.getQuantity());
-            existingCartItem.setPrice(cartItemDetails.getPrice());
-            CartItem updatedCartItem = cartItemService.saveCartItem(existingCartItem);
-            return ResponseEntity.ok(updatedCartItem);
+            return ResponseEntity.ok(savedCartItem);
         } else {
-            return ResponseEntity.notFound().build();
+            // yoksa yeni oluştur
+            CartItem cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(cartItemDto.getQuantity());
+            cartItem.setPrice(price);
+            cartItem.setCart(cart);
+            CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
+
+            cart.setTotalPrice(cart.getTotalPrice() + price);
+            cartService.addCart(cart);
+
+            return ResponseEntity.ok(savedCartItem);
         }
     }
+
+    @PutMapping("/update/{cartId}/{productId}")
+    public ResponseEntity<?> updateCartItem(
+            @PathVariable("cartId") Long cartId,
+            @PathVariable("productId") Long productId,
+            @RequestBody CartItemUpdateDto cartItemUpdateDto)
+    {
+        cartItemService.updateCartItem(cartId, productId, cartItemUpdateDto);
+        return ResponseEntity.ok("Cart item updated successfully");
+    }
+
+    /*@PutMapping("/update/{cartId}")
+    public ResponseEntity<CartItem> updateCartItem(@RequestBody CartItemUpdateDto cartItemUpdateDto,@PathVariable Long cartId) {
+
+        Product product = productService.getProductById(cartItemUpdateDto.getProductId());
+        Cart cart = cartService.getCartById(cartItemUpdateDto.getCartId());
+        double newPrice = cartItemUpdateDto.getQuantity() * product.getPrice();
+
+        CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
+        if (existingCartItem != null) {
+            // Eğer varsa, miktarı güncelle
+            double oldPrice = existingCartItem.getPrice();
+            existingCartItem.setQuantity(cartItemUpdateDto.getQuantity());
+            existingCartItem.setPrice(newPrice);
+            CartItem savedCartItem = cartItemService.saveCartItem(existingCartItem);
+            cart.setTotalPrice(cart.getTotalPrice() - oldPrice + newPrice);
+            cartService.addCart(cart);
+
+            return ResponseEntity.ok(savedCartItem);
+        }else {
+            // Eğer yoksa, yeni oluştur
+            CartItem cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(cartItemUpdateDto.getQuantity());
+            cartItem.setPrice(newPrice);
+            cartItem.setCart(cart);
+            CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
+
+            cart.setTotalPrice(cart.getTotalPrice() + newPrice);
+            cartService.addCart(cart);
+
+            return ResponseEntity.ok(savedCartItem);
+        }
+
+    }*/
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCartItem(@PathVariable Long id) {
@@ -79,11 +111,3 @@ private final CartService cartService;
         return ResponseEntity.ok().build();
     }
 }
-
-/*CartItem toSave = new CartItem();
-        toSave.setProduct(cartItem.getProduct());
-        toSave.setCart(cartItem.getCart());
-        toSave.setQuantity(cartItem.getQuantity());
-        double price = cartItem.getPrice() * cartItem.getQuantity();
-        toSave.setPrice(price);
-        */
