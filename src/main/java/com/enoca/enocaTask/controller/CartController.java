@@ -31,12 +31,10 @@ public class CartController {
             CartItemDto cartItemDto = new CartItemDto(
                     cartItem.getId(),
                     cartItem.getProduct().getId(),
-                    cartItem.getQuantity(),
-                    cartItem.getPrice()
+                    cartItem.getQuantity()
             );
             itemsInCartDto.add(cartItemDto);
         }
-
         return ResponseEntity.ok(itemsInCartDto);
     }
 

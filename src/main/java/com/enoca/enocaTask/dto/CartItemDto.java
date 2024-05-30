@@ -5,7 +5,7 @@ public class CartItemDto
     private Long cartId;
     private Long productId;
     private int quantity;
-    private double price;
+  /*  private double price;*/
 
     public Long getCartId() {
         return cartId;
@@ -15,11 +15,11 @@ public class CartItemDto
         this.cartId = cartId;
     }
 
-    public CartItemDto(Long cartId, Long productId, int quantity, double price) {
+    public CartItemDto(Long cartId, Long productId, int quantity) {
         this.cartId = cartId;
         this.productId = productId;
         this.quantity = quantity;
-        this.price = price;
+
     }
 
     public Long getProductId() {
@@ -36,13 +36,5 @@ public class CartItemDto
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 }
