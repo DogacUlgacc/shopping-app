@@ -28,15 +28,18 @@ private final CartService cartService;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CartItem> AddProductToCart(@RequestBody CartItemDto cartItemDto) {
+    public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto) {
+
         Product product = productService.getProductById(cartItemDto.getProductId());
+        long stockQuantity = product.getStockQuantity();
         Cart cart = cartService.getCartById(cartItemDto.getCartId());
         double price = cartItemDto.getQuantity() * product.getPrice();
 
         CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
 
-        if (existingCartItem != null) {
-            // Eğer varsa update et
+        if (existingCartItem != null && (stockQuantity >= cartItemDto.getQuantity())) {
+            // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da!
+            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
             existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
             existingCartItem.setPrice(existingCartItem.getPrice() + price);
             CartItem savedCartItem = cartItemService.saveCartItem(existingCartItem);
@@ -45,9 +48,11 @@ private final CartService cartService;
             cartService.addCart(cart);
             return ResponseEntity.ok(savedCartItem);
 
-        } else {
-            // yoksa yeni oluştur
+        } else if (stockQuantity >= cartItemDto.getQuantity()) {
+            // Yoksa yeni oluştur
             CartItem cartItem = new CartItem();
+            //Product db'de stock azalt!
+            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
 
             cartItem.setProduct(product);
             cartItem.setQuantity(cartItemDto.getQuantity());
@@ -59,9 +64,14 @@ private final CartService cartService;
 
             cartService.addCart(cart);
             return ResponseEntity.ok(savedCartItem);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stok yetersiz");
         }
     }
-   /*
+
+
+
+    /*
    UpdateCartItem() methodu ile hangi customerın hangi productının quantitysini istiyorsak değiştirebiliyoruz.
    * Aynı zamanda bu methodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
    * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
