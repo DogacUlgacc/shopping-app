@@ -37,27 +37,4 @@ public class CartController {
         }
         return ResponseEntity.ok(itemsInCartDto);
     }
-
-    /*// Sepetteki ürünün miktarını güncelleme BU KISMI CartItem SINIFINDA !!!
-    @PutMapping("/{cartId}/update")
-    public ResponseEntity<Cart> UpdateCart(@PathVariable Long cartId, @RequestParam Long productId, @RequestParam int quantity) {
-        cartService.updateProductQuantityInCart(cartId, productId, quantity);
-        Cart updatedCart = cartService.getCartById(cartId);
-        return ResponseEntity.ok(updatedCart);
-    }*/
-
-  /*  @PostMapping("/{cartId}/add")
-    public ResponseEntity<Cart> addProductToCart(@PathVariable Long cartId, @RequestParam Long productId, @RequestParam int quantity) {
-        cartService.addProductToCart(cartId, productId, quantity);
-        Cart updatedCart = cartService.getCartById(cartId);
-        return ResponseEntity.ok(updatedCart);
-    }*/
-
-    /*// Sepetten ürün çıkarma
-    @PostMapping("/{cartId}/remove")
-    public ResponseEntity<Cart> removeProductFromCart(@PathVariable Long cartId, @RequestParam Long productId) {
-        cartService.removeProductFromCart(cartId, productId);
-        Cart updatedCart = cartService.getCartById(cartId);
-        return ResponseEntity.ok(updatedCart);
-    }*/
 }

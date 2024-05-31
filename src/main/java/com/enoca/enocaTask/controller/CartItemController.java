@@ -8,6 +8,7 @@ import com.enoca.enocaTask.entity.Product;
 import com.enoca.enocaTask.service.CartItemService;
 import com.enoca.enocaTask.service.CartService;
 import com.enoca.enocaTask.service.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
@@ -47,19 +48,24 @@ private final CartService cartService;
         } else {
             // yoksa yeni oluştur
             CartItem cartItem = new CartItem();
+
             cartItem.setProduct(product);
             cartItem.setQuantity(cartItemDto.getQuantity());
             cartItem.setPrice(price);
             cartItem.setCart(cart);
+
             CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
-
             cart.setTotalPrice(cart.getTotalPrice() + price);
-            cartService.addCart(cart);
 
+            cartService.addCart(cart);
             return ResponseEntity.ok(savedCartItem);
         }
     }
-
+   /*
+   UpdateCartItem() methodu ile hangi customerın hangi productının quantitysini istiyorsak değiştirebiliyoruz.
+   * Aynı zamanda bu methodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
+   * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
+   * */
     @PutMapping("/update/{cartId}/{productId}")
     public ResponseEntity<?> updateCartItem(
             @PathVariable("cartId") Long cartId,
@@ -67,47 +73,28 @@ private final CartService cartService;
             @RequestBody CartItemUpdateDto cartItemUpdateDto)
     {
         cartItemService.updateCartItem(cartId, productId, cartItemUpdateDto);
-        return ResponseEntity.ok("Cart item updated successfully");
+        return ResponseEntity.ok("Cart item güncellendi");
     }
 
-    /*@PutMapping("/update/{cartId}")
-    public ResponseEntity<CartItem> updateCartItem(@RequestBody CartItemUpdateDto cartItemUpdateDto,@PathVariable Long cartId) {
-
-        Product product = productService.getProductById(cartItemUpdateDto.getProductId());
-        Cart cart = cartService.getCartById(cartItemUpdateDto.getCartId());
-        double newPrice = cartItemUpdateDto.getQuantity() * product.getPrice();
-
-        CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
-        if (existingCartItem != null) {
-            // Eğer varsa, miktarı güncelle
-            double oldPrice = existingCartItem.getPrice();
-            existingCartItem.setQuantity(cartItemUpdateDto.getQuantity());
-            existingCartItem.setPrice(newPrice);
-            CartItem savedCartItem = cartItemService.saveCartItem(existingCartItem);
-            cart.setTotalPrice(cart.getTotalPrice() - oldPrice + newPrice);
-            cartService.addCart(cart);
-
-            return ResponseEntity.ok(savedCartItem);
-        }else {
-            // Eğer yoksa, yeni oluştur
-            CartItem cartItem = new CartItem();
-            cartItem.setProduct(product);
-            cartItem.setQuantity(cartItemUpdateDto.getQuantity());
-            cartItem.setPrice(newPrice);
-            cartItem.setCart(cart);
-            CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
-
-            cart.setTotalPrice(cart.getTotalPrice() + newPrice);
-            cartService.addCart(cart);
-
-            return ResponseEntity.ok(savedCartItem);
-        }
-
-    }*/
-
+    /*
+     *RemoveProductFromCart() methodu ile hangi Customerın hangi productını silmek istiyorsak silebiliyoruz.
+     * Daha sonra cart içerisinde total_price tekrar update ediliyor.
+     * */
     @DeleteMapping("/delete/{cartItemId}/{productId}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable Long cartItemId, @PathVariable Long productId) {
+    public ResponseEntity<Void> RemoveProductFromCart(@PathVariable Long cartItemId, @PathVariable Long productId) {
+
         cartItemService.deleteCartItem(cartItemId, productId);
         return ResponseEntity.ok().build();
     }
+
+    /*
+     * EmptyCart() methodu ile bir customer kendi cart'ı içerisindeki bütün productları silebiliyor.
+     * Bu endpoint ile aynı zamanda cart tablosu içerisinde bulunan cart'ın total_price'ı service kısmında 0 olarak set ediliyor.
+     * */
+    @DeleteMapping("/empty/{cartId}")
+    public ResponseEntity<String> emptyCart(@PathVariable Long cartId) {
+        cartItemService.emptyCart(cartId);
+        return ResponseEntity.ok("Cart boşaltıldı!");
+    }
+
 }

@@ -17,16 +17,14 @@ import java.util.Optional;
 @Service
 public class CartItemService {
 
-
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
 
-    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductRepository productRepository) {
+    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository) {
         this.cartItemRepository = cartItemRepository;
 
         this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
+
     }
 
     public List<CartItem> getAllCartItems() {
@@ -40,8 +38,6 @@ public class CartItemService {
     public CartItem saveCartItem(CartItem cartItem) {
         return cartItemRepository.save(cartItem);
     }
-
-
 
     public CartItem getCartItemByProductAndCart(Product product, Cart cart) {
         return cartItemRepository.findByProductAndCart(product, cart);
@@ -67,7 +63,7 @@ public class CartItemService {
             double newCartTotalPrice = oldCartTotalPrice - oldItemPrice + newItemPrice;
             cart.setTotalPrice(newCartTotalPrice);
 
-            // Veritabanında güncelle
+            // DB güncelle
             cartItemRepository.save(cartItem);
             cartRepository.save(cart);
         } else {
@@ -78,7 +74,6 @@ public class CartItemService {
     @Transactional
     public void deleteCartItem(Long cartId, Long productId) {
         try {
-            // CartItem'ı bul
             Optional<CartItem> optionalCartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId);
             // Optional içindeki CartItem'ı al, eğer yoksa hata fırlat
             CartItem cartItem = optionalCartItem.orElseThrow(() -> new RuntimeException("CartItem bulunamadı."));
@@ -86,10 +81,16 @@ public class CartItemService {
             Cart cart = cartItem.getCart();
             double subtractPrice = cartItem.getPrice();
             cart.setTotalPrice(cart.getTotalPrice() - subtractPrice);
-            // CartItem'ı sil
+
             cartItemRepository.delete(cartItem);
         } catch (Exception e) {
             throw new RuntimeException("CartItem silinirken hata oluştu.", e);
         }
+    }
+
+    public void emptyCart(Long cartId) {
+        Cart cart = cartRepository.getReferenceById(cartId);
+        cart.setTotalPrice(0);
+        cartItemRepository.deleteByCartId(cartId);
     }
 }
