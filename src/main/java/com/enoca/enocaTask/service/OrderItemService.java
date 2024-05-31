@@ -20,6 +20,6 @@ public class OrderItemService {
     }
 
     public OrderItem getOrderItemById(Long id) {
-        return orderItemRepository.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+        return orderItemRepository.findById(id).orElseThrow(() -> new RuntimeException("OrderItem bulunamadı"));
     }
 }

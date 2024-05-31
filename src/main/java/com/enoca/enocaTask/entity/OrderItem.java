@@ -1,5 +1,6 @@
 package com.enoca.enocaTask.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,9 +13,10 @@ public class OrderItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id",referencedColumnName = "id")
+    @JsonIgnore
     private Order order;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id",referencedColumnName = "id")
     private Product product;
 
@@ -31,7 +33,6 @@ public class OrderItem extends BaseEntity {
     public void setOrder(Order order) {
         this.order = order;
     }
-
 
     public Double getPrice() {
         return price;

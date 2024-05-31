@@ -43,37 +43,6 @@ public class CartItemService {
         return cartItemRepository.findByProductAndCart(product, cart);
     }
 
-/*
-    public void updateCartItem(Long cartId, Long productId, CartItemUpdateDto cartItemUpdateDto) {
-        Optional<CartItem> optionalCartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId);
-        Product product = productService.getProductById(productId);
-        long productStock = product.getStockQuantity();
-        if (optionalCartItem.isPresent()) {
-            CartItem cartItem = optionalCartItem.get();
-
-            // Eski ürün fiyatını al
-            double oldItemPrice = cartItem.getPrice();
-
-            // Yeni adetle ürün fiyatını güncelle
-            cartItem.setQuantity(cartItemUpdateDto.getQuantity());
-            double newItemPrice = cartItemUpdateDto.getQuantity() * cartItem.getProduct().getPrice();
-            cartItem.setPrice(newItemPrice);
-
-            // Sepetin toplam fiyatını güncelle
-            Cart cart = cartItem.getCart();
-            double oldCartTotalPrice = cart.getTotalPrice();
-            double newCartTotalPrice = oldCartTotalPrice - oldItemPrice + newItemPrice;
-            cart.setTotalPrice(newCartTotalPrice);
-
-            // DB güncelle
-            cartItemRepository.save(cartItem);
-            cartRepository.save(cart);
-        } else {
-            throw new RuntimeException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
-        }
-    }
-*/
-
     public void updateCartItem(Long cartId, Long productId, CartItemUpdateDto cartItemUpdateDto) {
         Optional<CartItem> optionalCartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId);
         Product product = productService.getProductById(productId);
