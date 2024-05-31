@@ -38,7 +38,7 @@ private final CartService cartService;
         CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
 
         if (existingCartItem != null && (stockQuantity >= cartItemDto.getQuantity())) {
-            // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da!
+            // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da update ediyoruz.
             product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
             existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
             existingCartItem.setPrice(existingCartItem.getPrice() + price);
@@ -73,7 +73,7 @@ private final CartService cartService;
 
     /*
    UpdateCartItem() methodu ile hangi customerın hangi productının quantitysini istiyorsak değiştirebiliyoruz.
-   * Aynı zamanda bu methodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
+   * Aynı zamanda bu metodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
    * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
    * */
     @PutMapping("/update/{cartId}/{productId}")
@@ -87,8 +87,9 @@ private final CartService cartService;
     }
 
     /*
-     *RemoveProductFromCart() methodu ile hangi Customerın hangi productını silmek istiyorsak silebiliyoruz.
+     *RemoveProductFromCart() metodu ile hangi Customerın hangi productını silmek istiyorsak silebiliyoruz.
      * Daha sonra cart içerisinde total_price tekrar update ediliyor.
+     * Product içerisindeki stok miktarı da silinen cartItemdaki quantity miktarına göre update ediliyor.
      * */
     @DeleteMapping("/delete/{cartItemId}/{productId}")
     public ResponseEntity<Void> RemoveProductFromCart(@PathVariable Long cartItemId, @PathVariable Long productId) {

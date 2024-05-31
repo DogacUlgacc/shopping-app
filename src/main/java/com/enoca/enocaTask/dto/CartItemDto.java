@@ -5,7 +5,6 @@ public class CartItemDto
     private Long cartId;
     private Long productId;
     private int quantity;
-  /*  private double price;*/
 
     public Long getCartId() {
         return cartId;

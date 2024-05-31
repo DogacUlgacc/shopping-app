@@ -9,6 +9,9 @@ import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class BaseEntity {
 
+    /*/CREATED_DATE UPDATED_DATE BASE ENTİTYDE OLMALI!!!/*/
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

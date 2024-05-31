@@ -24,6 +24,9 @@ public class Cart extends BaseEntity {
     @Column(name = "total_price")
     private double totalPrice;
 
+
+
+
     public Customer getCustomer() {
         return customer;
     }

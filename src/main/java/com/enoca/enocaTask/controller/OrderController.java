@@ -1,44 +1,37 @@
 package com.enoca.enocaTask.controller;
 
-import com.enoca.enocaTask.entity.Order;
+import com.enoca.enocaTask.entity.*;
+import com.enoca.enocaTask.repository.OrderRepository;
+import com.enoca.enocaTask.service.CartService;
+import com.enoca.enocaTask.service.CustomerService;
 import com.enoca.enocaTask.service.OrderService;
+import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
-    /*private final OrderService orderService;
 
-    public OrderController(OrderService orderService){
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
+
     @GetMapping("/all")
-    public List<Order> getAllOrders(){
-        return orderService.getAllOrders();
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
-    @GetMapping("{userId}")
-    public List<Order> getOrdersByUserId(@PathVariable Long userId){
-        return orderService.getOrderByUserId(userId);
+    @Transactional
+    @PostMapping("/checkout/{cartId}")
+    public ResponseEntity<String> placeOrder(@PathVariable Long cartId) {
+        String message = orderService.placeOrder(cartId);
+        return ResponseEntity.ok(message);
     }
-
-
-
-   *//* @PostMapping("/add")
-    public Order addOrder(@RequestBody OrderDto orderDto){
-        return orderService.addOrder(orderDto);
-    }*//*
-
-    @PutMapping("/{orderId}")
-    public Order updateOrder(@RequestBody Order newOrder, @PathVariable Long orderId){
-        newOrder.setId(orderId);
-        return orderService.updateOrder(newOrder);
-    }
-    @DeleteMapping("/{orderId}")
-    public void deleteOrderById(@PathVariable Long orderId){
-        orderService.deleteOrderById(orderId);
-    }*/
 }

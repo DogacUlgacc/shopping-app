@@ -27,6 +27,22 @@ public class CartItem extends BaseEntity {
     @Column(name = "price")
     private double price;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @JsonIgnore
     public Cart getCart() {
         return cart;
