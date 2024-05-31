@@ -19,6 +19,7 @@ public class CartItemController {
 private final CartItemService cartItemService;
 private final ProductService productService;
 private final CartService cartService;
+
     public CartItemController(CartItemService cartItemService, ProductService productService, CartService cartService) {
         this.cartItemService = cartItemService;
         this.productService = productService;
@@ -41,8 +42,8 @@ private final CartService cartService;
 
             cart.setTotalPrice(cart.getTotalPrice() + price);
             cartService.addCart(cart);
-
             return ResponseEntity.ok(savedCartItem);
+
         } else {
             // yoksa yeni oluştur
             CartItem cartItem = new CartItem();
@@ -104,10 +105,9 @@ private final CartService cartService;
 
     }*/
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable Long id) {
-        cartItemService.deleteCartItem(id);
+    @DeleteMapping("/delete/{cartItemId}/{productId}")
+    public ResponseEntity<Void> deleteCartItem(@PathVariable Long cartItemId, @PathVariable Long productId) {
+        cartItemService.deleteCartItem(cartItemId, productId);
         return ResponseEntity.ok().build();
     }
 }

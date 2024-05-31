@@ -38,7 +38,7 @@ public class CustomerController {
             Customer addedUser = customerService.addCustomer(user);
             Cart cart = new Cart();
             cart.setCustomer(addedUser); // Müşteriyi sepete ata
-            cart.setTotalPrice(0.0); // Başlangıçta toplam fiyatı sıfır yapabiliriz
+            cart.setTotalPrice(0.0); // Başlangıçta toplam fiyatı sıfır
 
             // Alışveriş sepetini veritabanına ekle
 

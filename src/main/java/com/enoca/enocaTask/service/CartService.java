@@ -88,12 +88,12 @@ public class CartService {
 
     public void updateProductQuantityInCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> new RuntimeException("Cart bulunamadı"));
 
         CartItem cartItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Product not found in cart"));
+                .orElseThrow(() -> new RuntimeException("Product bulunamadı"));
 
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);

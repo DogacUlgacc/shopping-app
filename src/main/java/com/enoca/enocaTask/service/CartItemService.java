@@ -8,6 +8,7 @@ import com.enoca.enocaTask.repository.CartItemRepository;
 import com.enoca.enocaTask.repository.CartRepository;
 import com.enoca.enocaTask.repository.ProductRepository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +19,14 @@ public class CartItemService {
 
 
     private final CartItemRepository cartItemRepository;
-    private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
 
-    public CartItemService(CartItemRepository cartItemRepository, ProductRepository productRepository, CartRepository cartRepository) {
+    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductRepository productRepository) {
         this.cartItemRepository = cartItemRepository;
-        this.productRepository = productRepository;
+
         this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
     }
 
     public List<CartItem> getAllCartItems() {
@@ -39,9 +41,8 @@ public class CartItemService {
         return cartItemRepository.save(cartItem);
     }
 
-    public void deleteCartItem(Long id) {
-        cartItemRepository.deleteById(id);
-    }
+
+
     public CartItem getCartItemByProductAndCart(Product product, Cart cart) {
         return cartItemRepository.findByProductAndCart(product, cart);
     }
@@ -74,5 +75,21 @@ public class CartItemService {
         }
     }
 
-
+    @Transactional
+    public void deleteCartItem(Long cartId, Long productId) {
+        try {
+            // CartItem'ı bul
+            Optional<CartItem> optionalCartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId);
+            // Optional içindeki CartItem'ı al, eğer yoksa hata fırlat
+            CartItem cartItem = optionalCartItem.orElseThrow(() -> new RuntimeException("CartItem bulunamadı."));
+            // Toplam fiyatı güncelle
+            Cart cart = cartItem.getCart();
+            double subtractPrice = cartItem.getPrice();
+            cart.setTotalPrice(cart.getTotalPrice() - subtractPrice);
+            // CartItem'ı sil
+            cartItemRepository.delete(cartItem);
+        } catch (Exception e) {
+            throw new RuntimeException("CartItem silinirken hata oluştu.", e);
+        }
+    }
 }
