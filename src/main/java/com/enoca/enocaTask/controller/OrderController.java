@@ -24,6 +24,12 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Order>> getAllOrdersForCustomer(@PathVariable Long customerId) {
+        List<Order> orders = orderService.getAllOrdersForCustomer(customerId);
+        return ResponseEntity.ok(orders);
+    }
+
     @Transactional
     @PostMapping("/checkout/{cartId}")
     public ResponseEntity<String> placeOrder(@PathVariable Long cartId) {
@@ -31,10 +37,13 @@ public class OrderController {
         return ResponseEntity.ok(message);
     }
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Order>> getAllOrdersForCustomer(@PathVariable Long customerId) {
-        List<Order> orders = orderService.getAllOrdersForCustomer(customerId);
-        return ResponseEntity.ok(orders);
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrderForCode(@PathVariable Long orderId) {
+        Order order = orderService.getOrderForCode(orderId);
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }

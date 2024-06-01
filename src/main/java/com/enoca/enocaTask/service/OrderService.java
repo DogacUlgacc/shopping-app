@@ -53,6 +53,9 @@ public class OrderService {
 
     public List<Order> getAllOrdersForCustomer(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
+    }
 
+    public Order getOrderForCode(Long orderId) {
+        return orderRepository.findById(orderId).orElse(null);
     }
 }
