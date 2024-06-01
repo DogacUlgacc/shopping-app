@@ -68,6 +68,7 @@ public class CustomerController {
 
     /*
     * Customer siliniyor.
+    * Customer silinirken ona ait olan cart da siliniyor.
     * */
     @DeleteMapping("/{userId}")
     public void deleteUserById(@PathVariable Long userId){

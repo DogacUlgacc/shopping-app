@@ -4,6 +4,7 @@ import com.enoca.enocaTask.dto.CartItemUpdateDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.CartItem;
 import com.enoca.enocaTask.entity.Product;
+import com.enoca.enocaTask.exception.StokYetersizException;
 import com.enoca.enocaTask.repository.CartItemRepository;
 import com.enoca.enocaTask.repository.CartRepository;
 import com.enoca.enocaTask.repository.ProductRepository;
@@ -53,7 +54,7 @@ public class CartItemService {
 
             //Update edilirken quantity artırılıyorsa productın stoğu azalt!
             if(cartItem.getQuantity()<= cartItemUpdateDto.getQuantity()){
-
+                if(productStock >= cartItemUpdateDto.getQuantity()){
                 product.setStockQuantity((int)productStock + (int)difference);
                 // Eski ürün fiyatını al
                 double oldItemPrice = cartItem.getPrice();
@@ -71,7 +72,10 @@ public class CartItemService {
 
                 // DB güncelle
                 cartItemRepository.save(cartItem);
-                cartRepository.save(cart);
+                cartRepository.save(cart);}
+                else {
+                    throw new StokYetersizException("Stok yetersiz");
+                }
             }
 
             //Update edilirken quantity artırılıyorsa productın stoğu artır!
@@ -96,7 +100,7 @@ public class CartItemService {
                 cartRepository.save(cart);
             }
         } else {
-            throw new RuntimeException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
+            throw new StokYetersizException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
         }
     }
 

@@ -1,16 +1,19 @@
 package com.enoca.enocaTask.service;
 
+import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.repository.CustomerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
-
-    public CustomerService(CustomerRepository customerRepository) {
+    private final CartService cartService;
+    public CustomerService(CustomerRepository customerRepository, CartService cartService) {
         this.customerRepository = customerRepository;
+        this.cartService = cartService;
     }
 
     public List<Customer> getAllUsers() {
@@ -32,7 +35,10 @@ public class CustomerService {
         return customerRepository.save(updateCustomer);
     }
 
+    @Transactional
     public void deleteUserById(Long userId) {
+        Cart cart = cartService.getCartById(userId);
+        cartService.deleteCart(userId);
         customerRepository.deleteById(userId);
     }
 }

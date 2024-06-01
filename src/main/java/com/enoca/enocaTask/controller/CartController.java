@@ -19,7 +19,6 @@ public class CartController {
         this.cartService = cartService;
     }
 
-
     /*
     * Kullanıcının sahip olduğu Id ile cartın Id değerleri aynı oluyor Her kullanıcı oluşturulduğunda DB' de o kullanıcı
     * için bir adet de cart oluşturuluyor. Bu method ile kullanıcı kendi cart'ında bulanan productları ,fiyatları ve adetleri
@@ -41,5 +40,9 @@ public class CartController {
             itemsInCartDto.add(cartItemDto);
         }
         return ResponseEntity.ok(itemsInCartDto);
+    }
+    @DeleteMapping("{cartId}")
+    public void deleteCart(@PathVariable Long cartId){
+        cartService.deleteCart(cartId);
     }
 }
