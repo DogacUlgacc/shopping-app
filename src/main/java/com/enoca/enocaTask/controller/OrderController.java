@@ -32,16 +32,17 @@ public class OrderController {
 
     @Transactional
     @PostMapping("/checkout/{cartId}")
-    public ResponseEntity<String> placeOrder(@PathVariable Long cartId) {
+    public ResponseEntity<String> PlaceOrder(@PathVariable Long cartId) {
         String message = orderService.placeOrder(cartId);
         return ResponseEntity.ok(message);
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderForCode(@PathVariable Long orderId) {
-        Order order = orderService.getOrderForCode(orderId);
-        if (order != null) {
-            return ResponseEntity.ok(order);
+
+    @GetMapping("/{orderItemId}")
+    public ResponseEntity<List<OrderItem>> GetOrderForCode(@PathVariable Long orderItemId) {
+        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderItemId);
+        if (orderItems != null && !orderItems.isEmpty()) {
+            return ResponseEntity.ok(orderItems);
         } else {
             return ResponseEntity.notFound().build();
         }

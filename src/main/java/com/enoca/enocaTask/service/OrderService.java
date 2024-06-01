@@ -14,11 +14,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartService cartService;
     private final CustomerService customerService;
+    private final OrderItemService orderItemService;
 
-    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService) {
+
+    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService, OrderItemService orderItemService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.customerService = customerService;
+        this.orderItemService = orderItemService;
     }
 
 
@@ -50,12 +53,11 @@ public class OrderService {
         return "Sipariş başarıyla oluşturuldu";
     }
 
-
     public List<Order> getAllOrdersForCustomer(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
     }
 
-    public Order getOrderForCode(Long orderId) {
-        return orderRepository.findById(orderId).orElse(null);
+    public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
+        return orderItemService.findByOrderId(orderId);
     }
 }
