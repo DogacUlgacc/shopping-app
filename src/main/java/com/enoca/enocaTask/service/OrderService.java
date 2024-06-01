@@ -15,13 +15,14 @@ public class OrderService {
     private final CartService cartService;
     private final CustomerService customerService;
     private final OrderItemService orderItemService;
+    private final CartItemService cartItemService;
 
-
-    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService, OrderItemService orderItemService) {
+    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService, OrderItemService orderItemService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.customerService = customerService;
         this.orderItemService = orderItemService;
+        this.cartItemService = cartItemService;
     }
 
     public List<Order> getAllOrders() {
@@ -32,6 +33,8 @@ public class OrderService {
         Cart cart = cartService.getCartById(cartId);
         Order order = new Order();
         Customer customer = customerService.getUserById(cartId);
+
+
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (CartItem cartItem : cart.getItems()) {
@@ -48,6 +51,8 @@ public class OrderService {
         order.setCustomer(customer);
         order.setTotalPrice(cart.getTotalPrice());
 
+        // CartItem içerisinde tutulanları order verildikten sonra sıfırlansın. Cart içerisindeki total price da 0 a set olsun.
+        cartItemService.emptyCart(cartId);
         orderRepository.save(order);
         return "Sipariş başarıyla oluşturuldu";
     }
@@ -59,4 +64,5 @@ public class OrderService {
     public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
         return orderItemService.findByOrderId(orderId);
     }
+
 }

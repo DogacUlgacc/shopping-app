@@ -40,6 +40,7 @@ public class OrderController {
     /*
      * Belirli bir sepet (cartId) için sipariş oluşturur.
      * Sepetteki ürünler Order olarak dönüştürülür ve toplam fiyat güncellenir.
+     * Sipariş oluşturduktan sonra CartItemlar silinir ve cart içerisindeki total price da sıfırlanır.
      */
     @Transactional
     @PostMapping("/checkout/{cartId}")
@@ -47,7 +48,6 @@ public class OrderController {
         String message = orderService.placeOrder(cartId);
         return ResponseEntity.ok(message);
     }
-
 
     /*
      * OrderId kullanarak veritabanından sipariş bilgilerini return eder.
@@ -61,4 +61,6 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 }

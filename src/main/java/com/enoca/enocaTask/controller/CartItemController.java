@@ -84,7 +84,7 @@ private final CartService cartService;
    * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
    * */
     @PutMapping("/update/{cartId}/{productId}")
-    public ResponseEntity<?> updateCartItem(
+    public ResponseEntity<?> updateCart(
             @PathVariable("cartId") Long cartId,
             @PathVariable("productId") Long productId,
             @RequestBody CartItemUpdateDto cartItemUpdateDto)
