@@ -2,6 +2,7 @@ package com.enoca.enocaTask.service;
 
 import com.enoca.enocaTask.entity.*;
 import com.enoca.enocaTask.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -61,8 +62,8 @@ public class OrderService {
         return orderRepository.findByCustomerId(customerId);
     }
 
-    public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
-        return orderItemService.findByOrderId(orderId);
-    }
 
+    @Transactional
+    public Order GetOrderForCode(Long orderId) {
+        return orderRepository.findById(orderId).orElse(null);    }
 }

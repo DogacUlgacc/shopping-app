@@ -52,15 +52,15 @@ public class OrderController {
     /*
      * OrderId kullanarak veritabanından sipariş bilgilerini return eder.
      */
-    @GetMapping("/{orderItemId}")
-    public ResponseEntity<List<OrderItem>> GetOrderForCode(@PathVariable Long orderItemId) {
-        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderItemId);
-        if (orderItems != null && !orderItems.isEmpty()) {
-            return ResponseEntity.ok(orderItems);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
+    @GetMapping("{orderId}")
+    public ResponseEntity<Order> GetOrderForCode(@PathVariable Long orderId){
+         Order order = orderService.GetOrderForCode(orderId);
+         if(order != null){
+             return ResponseEntity.ok(order);
+         }
+         else {
+             return  ResponseEntity.notFound().build();
+         }
+     }
 }
+
