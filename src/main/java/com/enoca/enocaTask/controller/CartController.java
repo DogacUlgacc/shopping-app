@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -20,6 +19,12 @@ public class CartController {
         this.cartService = cartService;
     }
 
+
+    /*
+    * Kullanıcının sahip olduğu Id ile cartın Id değerleri aynı oluyor Her kullanıcı oluşturulduğunda DB' de o kullanıcı
+    * için bir adet de cart oluşturuluyor. Bu method ile kullanıcı kendi cart'ında bulanan productları ,fiyatları ve adetleri
+    * görebiliyor..
+    * */
     @GetMapping("/{cartId}/items")
     public ResponseEntity<List<CartItemDto>> GetCart(@PathVariable Long cartId) {
         Cart cart = cartService.getCartById(cartId);

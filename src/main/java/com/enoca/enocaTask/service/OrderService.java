@@ -24,7 +24,6 @@ public class OrderService {
         this.orderItemService = orderItemService;
     }
 
-
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }

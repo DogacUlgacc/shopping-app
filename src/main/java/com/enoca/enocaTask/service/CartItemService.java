@@ -47,7 +47,7 @@ public class CartItemService {
         Optional<CartItem> optionalCartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId);
         Product product = productService.getProductById(productId);
         long productStock = product.getStockQuantity();
-        long difference = cartItemUpdateDto.getQuantity() - optionalCartItem.get().getQuantity(); // item 5 di 10 istedi  +5 çıkar diff
+        long difference = cartItemUpdateDto.getQuantity() - optionalCartItem.get().getQuantity();
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
 

@@ -27,6 +27,13 @@ private final CartService cartService;
         this.cartService = cartService;
     }
 
+
+    /*
+    * Bu method ile cartItem içerisine yeni ürünler ekleniyor. Eklenen ürünün stok miktarı product içerisindeki stokta azaltılıyor.
+    * Eğer yeterli stok yoksa hata mesajı dönüyor ve cartItem içerisine o ürün eklenemiyor.
+    * Eğer o product daha önce cartta varsa ürünün miktarını artırıyoruz. Daha önce o product eklenmemişse yeni cartItem oluşuyor
+    *
+    *  * */
     @PostMapping("/add")
     public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto) {
 
@@ -70,9 +77,9 @@ private final CartService cartService;
     }
 
 
-
     /*
-   UpdateCartItem() methodu ile hangi customerın hangi productının quantitysini istiyorsak değiştirebiliyoruz.
+     UpdateCartItem() methodu ile Customer'ın belli Product'ının cartItem içersindeki quantitysini değiştirebiliyoruz.
+   * Eğer cartItem içindeki miktarı artırırsak Product içerisindeki stok azalıyor. Miktarı azaltırsak da stok artırılıyor.
    * Aynı zamanda bu metodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
    * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
    * */
@@ -87,13 +94,12 @@ private final CartService cartService;
     }
 
     /*
-     *RemoveProductFromCart() metodu ile hangi Customerın hangi productını silmek istiyorsak silebiliyoruz.
+     * Customer'ın hangi Product'ını silmek istiyorsak silebiliyoruz.
      * Daha sonra cart içerisinde total_price tekrar update ediliyor.
      * Product içerisindeki stok miktarı da silinen cartItemdaki quantity miktarına göre update ediliyor.
      * */
     @DeleteMapping("/delete/{cartItemId}/{productId}")
     public ResponseEntity<Void> RemoveProductFromCart(@PathVariable Long cartItemId, @PathVariable Long productId) {
-
         cartItemService.deleteCartItem(cartItemId, productId);
         return ResponseEntity.ok().build();
     }

@@ -29,6 +29,9 @@ public class ProductController  {
         return productService.getProductById(productId);
     }
 
+    /*
+    * Yeni Product oluşturur ve DB'ye kaydeder.
+    * */
     @PostMapping("/add")
     public ResponseEntity<Object> CreateProduct(@RequestBody Product product) {
         try {
@@ -38,10 +41,16 @@ public class ProductController  {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Product eklenirken bir hata oluştu.");
         }
     }
+
+    /*
+    * Product'ı update eder.
+    */
+
     @PutMapping("update/{productId}")
     public Product UpdateProduct(@RequestBody Product newProduct, @PathVariable Long productId){
         return productService.updateProduct(newProduct,productId);
     }
+
 
     @DeleteMapping("/delete/{productId}")
     public void DeleteProduct(@PathVariable Long productId){
