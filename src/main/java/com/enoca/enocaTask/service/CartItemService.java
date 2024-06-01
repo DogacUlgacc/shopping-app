@@ -4,7 +4,7 @@ import com.enoca.enocaTask.dto.CartItemUpdateDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.CartItem;
 import com.enoca.enocaTask.entity.Product;
-import com.enoca.enocaTask.exception.StokYetersizException;
+import com.enoca.enocaTask.exception.StockException;
 import com.enoca.enocaTask.repository.CartItemRepository;
 import com.enoca.enocaTask.repository.CartRepository;
 import com.enoca.enocaTask.repository.ProductRepository;
@@ -74,7 +74,7 @@ public class CartItemService {
                 cartItemRepository.save(cartItem);
                 cartRepository.save(cart);}
                 else {
-                    throw new StokYetersizException("Stok yetersiz");
+                    throw new StockException("Stok yetersiz");
                 }
             }
 
@@ -100,7 +100,7 @@ public class CartItemService {
                 cartRepository.save(cart);
             }
         } else {
-            throw new StokYetersizException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
+            throw new StockException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
         }
     }
 
