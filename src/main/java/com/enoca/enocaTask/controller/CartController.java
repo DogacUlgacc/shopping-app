@@ -41,7 +41,9 @@ public class CartController {
         }
         return ResponseEntity.ok(itemsInCartDto);
     }
-
+/*
+/* Bu kısmı Customer silinirken kullanıyoruz. EmptyCart() cartItem classında!
+* */
     @DeleteMapping("{cartId}")
     public void deleteCart(@PathVariable Long cartId){
         cartService.deleteCart(cartId);

@@ -50,7 +50,7 @@ public class OrderController {
     }
 
     /*
-     * OrderId kullanarak veritabanından sipariş bilgilerini return eder.
+     * OrderId kullanarak veritabanından belirli bir siparişi return eder.
      */
     @GetMapping("{orderId}")
     public ResponseEntity<Order> GetOrderForCode(@PathVariable Long orderId){
