@@ -1,5 +1,6 @@
 package com.enoca.enocaTask.service;
 
+import com.enoca.enocaTask.dto.CartItemDto;
 import com.enoca.enocaTask.dto.CartItemUpdateDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.CartItem;
@@ -10,6 +11,8 @@ import com.enoca.enocaTask.repository.CartRepository;
 import com.enoca.enocaTask.repository.ProductRepository;
 
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +24,13 @@ public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
     private final ProductService productService;
+    private final CartService cartService;
 
-    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductService productService) {
+    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductService productService, CartService cartService) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
         this.productService = productService;
+        this.cartService = cartService;
     }
 
     public List<CartItem> getAllCartItems() {
@@ -131,5 +136,46 @@ public class CartItemService {
         Cart cart = cartRepository.getReferenceById(cartId);
         cart.setTotalPrice(0);
         cartItemRepository.deleteByCartId(cartId);
+    }
+
+    public ResponseEntity<?> addProductToCart(CartItemDto cartItemDto) {
+    Product product = productService.getProductById(cartItemDto.getProductId());
+        long stockQuantity = product.getStockQuantity();
+
+        Cart cart = cartService.getCartById(cartItemDto.getCartId());
+        double price = cartItemDto.getQuantity() * product.getPrice();
+
+        CartItem existingCartItem = this.getCartItemByProductAndCart(product, cart);
+
+        if (existingCartItem != null && (stockQuantity >= cartItemDto.getQuantity())) {
+            // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da update ediyoruz.
+            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
+            existingCartItem.setPrice(existingCartItem.getPrice() + price);
+            CartItem savedCartItem = this.saveCartItem(existingCartItem);
+
+            cart.setTotalPrice(cart.getTotalPrice() + price);
+            cartService.addCart(cart);
+            return ResponseEntity.ok(savedCartItem);
+
+        } else if (stockQuantity >= cartItemDto.getQuantity()) {
+            // Yoksa yeni oluştur
+            CartItem cartItem = new CartItem();
+            //Product db'de stock azalt!
+            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
+
+            cartItem.setProduct(product);
+            cartItem.setQuantity(cartItemDto.getQuantity());
+            cartItem.setPrice(price);
+            cartItem.setCart(cart);
+
+            CartItem savedCartItem = this.saveCartItem(cartItem);
+            cart.setTotalPrice(cart.getTotalPrice() + price);
+
+            cartService.addCart(cart);
+            return ResponseEntity.ok(savedCartItem);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stok yetersiz");
+        }
     }
 }

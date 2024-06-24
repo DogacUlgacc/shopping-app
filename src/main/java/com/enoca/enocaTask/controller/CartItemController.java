@@ -36,44 +36,10 @@ private final CartService cartService;
     *  * */
     @PostMapping("/add")
     public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto) {
+        return cartItemService.addProductToCart(cartItemDto);
 
-        Product product = productService.getProductById(cartItemDto.getProductId());
-        long stockQuantity = product.getStockQuantity();
-        Cart cart = cartService.getCartById(cartItemDto.getCartId());
-        double price = cartItemDto.getQuantity() * product.getPrice();
 
-        CartItem existingCartItem = cartItemService.getCartItemByProductAndCart(product, cart);
 
-        if (existingCartItem != null && (stockQuantity >= cartItemDto.getQuantity())) {
-            // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da update ediyoruz.
-            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
-            existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
-            existingCartItem.setPrice(existingCartItem.getPrice() + price);
-            CartItem savedCartItem = cartItemService.saveCartItem(existingCartItem);
-
-            cart.setTotalPrice(cart.getTotalPrice() + price);
-            cartService.addCart(cart);
-            return ResponseEntity.ok(savedCartItem);
-
-        } else if (stockQuantity >= cartItemDto.getQuantity()) {
-            // Yoksa yeni oluştur
-            CartItem cartItem = new CartItem();
-            //Product db'de stock azalt!
-            product.setStockQuantity(product.getStockQuantity() - cartItemDto.getQuantity());
-
-            cartItem.setProduct(product);
-            cartItem.setQuantity(cartItemDto.getQuantity());
-            cartItem.setPrice(price);
-            cartItem.setCart(cart);
-
-            CartItem savedCartItem = cartItemService.saveCartItem(cartItem);
-            cart.setTotalPrice(cart.getTotalPrice() + price);
-
-            cartService.addCart(cart);
-            return ResponseEntity.ok(savedCartItem);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stok yetersiz");
-        }
     }
 
 

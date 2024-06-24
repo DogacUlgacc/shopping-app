@@ -30,9 +30,7 @@ public class CustomerController {
         return customerService.getAllUsers();
     }
 
-    /*
-    * Id' ye göre customer return ediliyor.
-    * */
+    /*Id' ye göre customer return ediliyor. */
     @GetMapping("/{userId}")
     public Customer getUserById(@PathVariable Long userId){
         return customerService.getUserById(userId);
@@ -43,7 +41,7 @@ public class CustomerController {
     * Cart başlangıçta boş olduğu için cartın total_price 0 a set ediliyor.
     * */
     @PostMapping("/add")
-    public ResponseEntity<Object> AddCustomer(@RequestBody Customer user) {
+    public ResponseEntity<Customer> AddCustomer(@RequestBody Customer user) {
         try {
             Customer addedUser = customerService.addCustomer(user);
             Cart cart = new Cart();
@@ -55,7 +53,7 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Customer eklenirken bir hata oluştu.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
         /*
