@@ -17,44 +17,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cart-items")
 public class CartItemController {
 
-private final CartItemService cartItemService;
-private final ProductService productService;
-private final CartService cartService;
+    private final CartItemService cartItemService;
 
-    public CartItemController(CartItemService cartItemService, ProductService productService, CartService cartService) {
+
+    public CartItemController(CartItemService cartItemService) {
         this.cartItemService = cartItemService;
-        this.productService = productService;
-        this.cartService = cartService;
     }
-
-
     /*
-    * Bu method ile cartItem içerisine yeni ürünler ekleniyor. Eklenen ürünün stok miktarı product içerisindeki stokta azaltılıyor.
-    * Eğer yeterli stok yoksa hata mesajı dönüyor ve cartItem içerisine o ürün eklenemiyor.
-    * Eğer o product daha önce cartta varsa ürünün miktarını artırıyoruz. Daha önce o product eklenmemişse yeni cartItem oluşuyor
-    *
-    *  * */
-    @PostMapping("/add")
-    public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto) {
-        return cartItemService.addProductToCart(cartItemDto);
-
-
-
+     * Bu method ile cartItem içerisine yeni ürünler ekleniyor. Eklenen ürünün stok miktarı product içerisindeki stokta azaltılıyor.
+     * Eğer yeterli stok yoksa hata mesajı dönüyor ve cartItem içerisine o ürün eklenemiyor.
+     * Eğer o product daha önce cartta varsa ürünün miktarını artırıyoruz. Daha önce o product eklenmemişse yeni cartItem oluşuyor
+     *
+     *  * */
+    @PostMapping("{userId}/add")
+    public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto, @PathVariable Long userId) {
+        return cartItemService.addProductToCart(cartItemDto, userId);
     }
-
 
     /*
      UpdateCartItem() methodu ile Customer'ın belli Product'ının cartItem içersindeki quantitysini değiştirebiliyoruz.
-   * Eğer cartItem içindeki miktarı artırırsak Product içerisindeki stok azalıyor. Miktarı azaltırsak da stok artırılıyor.
-   * Aynı zamanda bu metodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
-   * kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
-   * */
+     Eğer cartItem içindeki miktarı artırırsak Product içerisindeki stok azalıyor. Miktarı azaltırsak da stok artırılıyor.
+     Aynı zamanda bu metodun service kısmında cart tablosu içerisindeki total_price kısmı da ürünün fiyat değişimine göre
+     kendisini update ediyor ve yeni toplam fiyatı gösteriyor.
+    */
     @PutMapping("/update/{cartId}/{productId}")
     public ResponseEntity<?> updateCart(
             @PathVariable("cartId") Long cartId,
             @PathVariable("productId") Long productId,
-            @RequestBody CartItemUpdateDto cartItemUpdateDto)
-    {
+            @RequestBody CartItemUpdateDto cartItemUpdateDto) {
         cartItemService.updateCartItem(cartId, productId, cartItemUpdateDto);
         return ResponseEntity.ok("Cart item güncellendi");
     }

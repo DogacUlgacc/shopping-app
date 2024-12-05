@@ -1,5 +1,6 @@
 package com.enoca.enocaTask.service;
 
+import com.enoca.enocaTask.dto.CustomerDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.repository.CustomerRepository;
@@ -25,19 +26,24 @@ public class CustomerService {
     }
 
     public Customer addCustomer(Customer customer) {
-        return customerRepository.save(customer);
+        Customer addedUser = customerRepository.save(customer);
+        Cart cart = new Cart();
+        cart.setCustomer(addedUser); // Müşteriye sepeti ata
+        cart.setTotalPrice(0.0); // Başlangıçta toplam fiyatı sıfır
+
+        // Alışveriş sepetini veritabanına ekle
+         cartService.addCart(cart);
+        return customerRepository.getReferenceById(customer.getId());
     }
 
-    public Customer updateUser(Long userId,Customer newUser) {
+    public Customer updateUser(Long userId, CustomerDto newUser) {
     Customer updateCustomer = customerRepository.getReferenceById(userId);
-        updateCustomer.setUsername(newUser.getUsername());
-        updateCustomer.setSurname(newUser.getSurname());
+        updateCustomer.setEmail(newUser.getEmail());
         return customerRepository.save(updateCustomer);
     }
 
     @Transactional
     public void deleteUserById(Long userId) {
-        Cart cart = cartService.getCartById(userId);
         cartService.deleteCart(userId);
         customerRepository.deleteById(userId);
     }

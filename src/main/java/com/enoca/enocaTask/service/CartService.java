@@ -15,7 +15,7 @@ public class CartService {
 
     public CartService(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
-       }
+    }
 
     public List<Cart> getAllShoppingCart() {
         return cartRepository.findAll();
@@ -29,6 +29,7 @@ public class CartService {
     public Cart addCart(Cart cart) {
         return cartRepository.save(cart);
     }
+
     public void deleteCart(Long cartId) {
         cartRepository.deleteById(cartId);
     }
@@ -42,8 +43,9 @@ public class CartService {
         for (CartItem cartItem : cart.getItems()) {
             CartItemDto cartItemDto = new CartItemDto(
                     cartItem.getId(),
-                    cartItem.getProduct().getId(),
-                    cartItem.getQuantity()
+                    cartItem.getQuantity(),
+                    cartItem.getPrice(),
+                    cartItem.getProduct().getName()
             );
             itemsInCartDto.add(cartItemDto);
         }

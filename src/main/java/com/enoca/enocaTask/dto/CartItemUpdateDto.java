@@ -1,5 +1,8 @@
 package com.enoca.enocaTask.dto;
 
+import lombok.Data;
+
+@Data
 public class CartItemUpdateDto {
     private int quantity;
 

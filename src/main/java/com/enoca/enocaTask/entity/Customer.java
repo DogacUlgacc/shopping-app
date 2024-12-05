@@ -8,6 +8,8 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Customer extends BaseEntity {
 
     @Id
@@ -15,10 +17,13 @@ public class Customer extends BaseEntity {
     private Long id;
 
     @Column(name = "name")
-    private String username;
+    private String name;
 
     @Column(name="surname")
     private String surname;
+
+    @Column(name="email")
+    private String email;
 
 
     @Override
@@ -31,19 +36,5 @@ public class Customer extends BaseEntity {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
 }

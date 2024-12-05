@@ -1,5 +1,6 @@
 package com.enoca.enocaTask.controller;
 
+import com.enoca.enocaTask.dto.CustomerDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.service.CartService;
@@ -15,11 +16,9 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CartService cartService;
 
     public CustomerController(CustomerService userService, CartService cartService) {
         this.customerService = userService;
-        this.cartService = cartService;
     }
 
     /*
@@ -36,31 +35,17 @@ public class CustomerController {
         return customerService.getUserById(userId);
     }
 
-    /*
-    * Yeni Customer ekleniyor. Her eklenen Customer için OneToOne ile db de bir adet de Cart oluşturuluyor.
-    * Cart başlangıçta boş olduğu için cartın total_price 0 a set ediliyor.
-    * */
+
     @PostMapping("/add")
-    public ResponseEntity<Customer> AddCustomer(@RequestBody Customer user) {
-        try {
-            Customer addedUser = customerService.addCustomer(user);
-            Cart cart = new Cart();
-            cart.setCustomer(addedUser); // Müşteriye sepeti ata
-            cart.setTotalPrice(0.0); // Başlangıçta toplam fiyatı sıfır
-
-            // Alışveriş sepetini veritabanına ekle
-            Cart addedCart = cartService.addCart(cart);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public Customer addCustomer(@RequestBody Customer user) {
+        return customerService.addCustomer(user);
     }
-        /*
-        * Customer update methodu isim ve soyisim değiştiriliyor.
-        * */
-    @PutMapping("/{userId}")
-    public Customer updateUser(@PathVariable Long userId, @RequestBody Customer newCustomer) {
+
+    /*
+    * Customer update methodu isim ve soyisim değiştiriliyor.
+    * */
+    @PutMapping("/update/{userId}")
+    public Customer updateUser(@PathVariable Long userId, @RequestBody CustomerDto newCustomer) {
         return customerService.updateUser(userId,newCustomer);
     }
 
@@ -68,7 +53,7 @@ public class CustomerController {
     * Customer siliniyor.
     * Customer silinirken ona ait olan cart da siliniyor.
     * */
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete/{userId}")
     public void deleteUserById(@PathVariable Long userId){
         customerService.deleteUserById(userId);
     }

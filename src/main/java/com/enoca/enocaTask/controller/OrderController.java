@@ -54,7 +54,7 @@ public class OrderController {
      */
     @GetMapping("{orderId}")
     public ResponseEntity<Order> GetOrderForCode(@PathVariable Long orderId){
-         Order order = orderService.GetOrderForCode(orderId);
+         Order order = orderService.getOrderForCode(orderId);
          if(order != null){
              return ResponseEntity.ok(order);
          }

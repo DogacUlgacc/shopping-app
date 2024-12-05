@@ -15,14 +15,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartService cartService;
     private final CustomerService customerService;
-    private final OrderItemService orderItemService;
     private final CartItemService cartItemService;
 
-    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService, OrderItemService orderItemService, CartItemService cartItemService) {
+    public OrderService(OrderRepository orderRepository, CartService cartService, CustomerService customerService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.customerService = customerService;
-        this.orderItemService = orderItemService;
         this.cartItemService = cartItemService;
     }
 
@@ -64,6 +62,7 @@ public class OrderService {
 
 
     @Transactional
-    public Order GetOrderForCode(Long orderId) {
-        return orderRepository.findById(orderId).orElse(null);    }
+    public Order getOrderForCode(Long orderId) {
+        return orderRepository.findById(orderId).orElse(null);
+    }
 }
