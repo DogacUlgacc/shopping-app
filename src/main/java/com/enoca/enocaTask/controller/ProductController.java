@@ -39,15 +39,15 @@ public class ProductController {
     /*
      * Product'ı update eder.
      */
-
     @PutMapping("update/{productId}")
-    public Product UpdateProduct(@RequestBody ProductDto newProduct, @PathVariable Long productId) {
+    public Product updateProduct(@RequestBody ProductDto newProduct, @PathVariable Long productId) {
         return productService.updateProduct(newProduct, productId); 
     }
 
 
     @DeleteMapping("/delete/{productId}")
-    public void DeleteProduct(@PathVariable Long productId) {
+    public void deleteProduct(@PathVariable Long productId) {
+        productService.deleteProductById(productId);
         productService.deleteProductById(productId);
 
     }

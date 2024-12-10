@@ -27,14 +27,12 @@ public class CartItemService {
     private final CartRepository cartRepository;
     private final ProductService productService;
     private final CartService cartService;
-    private final CustomerRepository customerRepository;
 
-    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductService productService, CartService cartService, CustomerRepository customerRepository) {
+    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductService productService, CartService cartService) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
         this.productService = productService;
         this.cartService = cartService;
-        this.customerRepository = customerRepository;
     }
 
     public List<CartItem> getAllCartItems() {
@@ -58,45 +56,25 @@ public class CartItemService {
         Product product = productService.getProductById(productId);
         long productStock = product.getQuantity();
         long difference = cartItemUpdateDto.getQuantity() - optionalCartItem.get().getQuantity();
-        if (optionalCartItem.isPresent()) {
-            CartItem cartItem = optionalCartItem.get();
+        CartItem cartItem = optionalCartItem.get();
 
-            //Update edilirken quantity artırılıyorsa productın stoğu azalt!
-            if (cartItem.getQuantity() <= cartItemUpdateDto.getQuantity()) {
-                if (productStock >= cartItemUpdateDto.getQuantity()) {
-                    product.setQuantity((int) productStock + (int) difference);
-                    // Eski ürün fiyatını al
-                    calculatePriceAndUpdateDb(cartItem, cartItemUpdateDto);
-                   /* double oldItemPrice = cartItem.getPrice();
-
-                    // Yeni adetle ürün fiyatını güncelle
-                    cartItem.setQuantity(cartItemUpdateDto.getQuantity());
-                    double newItemPrice = cartItemUpdateDto.getQuantity() * cartItem.getProduct().getPrice();
-                    cartItem.setPrice(newItemPrice);
-
-                    // Sepetin toplam fiyatını güncelle
-                    Cart cart = cartItem.getCart();
-                    double oldCartTotalPrice = cart.getTotalPrice();
-                    double newCartTotalPrice = oldCartTotalPrice - oldItemPrice + newItemPrice;
-                    cart.setTotalPrice(newCartTotalPrice);
-
-                    // DB güncelle
-                    cartItemRepository.save(cartItem);
-                    cartRepository.save(cart);*/
-                } else {
-                    throw new StockException("Stok yetersiz");
-                }
-            }
-
-            //Update edilirken quantity artırılıyorsa productın stoğu artır!
-            if (cartItem.getQuantity() >= cartItemUpdateDto.getQuantity()) {
-                product.setQuantity((int) productStock - (int) difference);
+        //Update edilirken quantity artırılıyorsa productın stoğu azalt!
+        if (cartItem.getQuantity() <= cartItemUpdateDto.getQuantity()) {
+            if (productStock >= cartItemUpdateDto.getQuantity()) {
+                product.setQuantity((int) productStock + (int) difference);
                 // Eski ürün fiyatını al
                 calculatePriceAndUpdateDb(cartItem, cartItemUpdateDto);
-
+            } else {
+                throw new StockException("Stok yetersiz");
             }
-        } else {
-            throw new StockException("Cart item bulunamadı cartId: " + cartId + " productId: " + productId);
+        }
+
+        //Update edilirken quantity artırılıyorsa productın stoğu artır!
+        if (cartItem.getQuantity() >= cartItemUpdateDto.getQuantity()) {
+            product.setQuantity((int) productStock - (int) difference);
+            // Eski ürün fiyatını al
+            calculatePriceAndUpdateDb(cartItem, cartItemUpdateDto);
+
         }
     }
 
@@ -188,4 +166,5 @@ public class CartItemService {
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
     }
+
 }
