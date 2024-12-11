@@ -30,7 +30,7 @@ public class CartController {
     }
 
     /*
-    * Bu kısmı Customer silinirken kullanıyoruz. EmptyCart() cartItem classında!
+    * Bu kısmı Customer silinirken kullanıyoruz. emptyCart() cartItem classında!
     */
     @DeleteMapping("{cartId}")
     public void deleteCart(@PathVariable Long cartId){

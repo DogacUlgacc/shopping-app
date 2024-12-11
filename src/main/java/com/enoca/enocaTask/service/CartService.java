@@ -48,6 +48,7 @@ public class CartService {
                     cartItem.getProduct().getName()
             );
             itemsInCartDto.add(cartItemDto);
+
         }
         return itemsInCartDto;
     }

@@ -2,16 +2,10 @@ package com.enoca.enocaTask.controller;
 
 import com.enoca.enocaTask.dto.CartItemDto;
 import com.enoca.enocaTask.dto.CartItemUpdateDto;
-import com.enoca.enocaTask.entity.Cart;
-import com.enoca.enocaTask.entity.CartItem;
-import com.enoca.enocaTask.entity.Product;
 import com.enoca.enocaTask.service.CartItemService;
-import com.enoca.enocaTask.service.CartService;
-import com.enoca.enocaTask.service.ProductService;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/cart-items")
@@ -19,16 +13,14 @@ public class CartItemController {
 
     private final CartItemService cartItemService;
 
-
     public CartItemController(CartItemService cartItemService) {
         this.cartItemService = cartItemService;
     }
-    /*
-     * Bu method ile cartItem içerisine yeni ürünler ekleniyor. Eklenen ürünün stok miktarı product içerisindeki stokta azaltılıyor.
+    /* Bu method ile cartItem içerisine yeni ürünler ekleniyor. Eklenen ürünün stok miktarı product içerisindeki stokta azaltılıyor.
      * Eğer yeterli stok yoksa hata mesajı dönüyor ve cartItem içerisine o ürün eklenemiyor.
-     * Eğer o product daha önce cartta varsa ürünün miktarını artırıyoruz. Daha önce o product eklenmemişse yeni cartItem oluşuyor
-     *
-     *  * */
+     * Eğer o product daha önce cartta varsa ürünün miktarını artırıyoruz. Daha önce o product eklenmemişse yeni cartItem oluşuyor.
+      */
+
     @PostMapping("{userId}/add")
     public ResponseEntity<?> addProductToCart(@RequestBody CartItemDto cartItemDto, @PathVariable Long userId) {
         return cartItemService.addProductToCart(cartItemDto, userId);
