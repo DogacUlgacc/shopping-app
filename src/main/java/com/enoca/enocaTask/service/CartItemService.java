@@ -4,14 +4,12 @@ import com.enoca.enocaTask.dto.CartItemDto;
 import com.enoca.enocaTask.dto.CartItemUpdateDto;
 import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.CartItem;
-import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.entity.Product;
 import com.enoca.enocaTask.exception.CartItemNotFoundEx;
 import com.enoca.enocaTask.exception.StockException;
 import com.enoca.enocaTask.repository.CartItemRepository;
 import com.enoca.enocaTask.repository.CartRepository;
 
-import com.enoca.enocaTask.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,7 +90,7 @@ public class CartItemService {
 
             // Toplam fiyatı güncelle
             Cart cart = cartItem.getCart();
-            double subtractPrice = cartItem.getPrice();
+            double subtractPrice = cartItem.getTotal_price();
             cart.setTotalPrice(cart.getTotalPrice() - subtractPrice);
 
             cartItemRepository.delete(cartItem);
@@ -120,7 +118,7 @@ public class CartItemService {
             // Eğer daha önce varsa her şeyi update et. Productın db'deki stock miktarını da update ediyoruz.
             product.setQuantity(product.getQuantity() - cartItemDto.getQuantity());
             existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDto.getQuantity());
-            existingCartItem.setPrice(existingCartItem.getPrice() + price);
+            existingCartItem.setTotal_price(existingCartItem.getTotal_price() + price);
             CartItem savedCartItem = this.saveCartItem(existingCartItem);
 
             cart.setTotalPrice(cart.getTotalPrice() + price);
@@ -135,7 +133,7 @@ public class CartItemService {
 
             cartItem.setProduct(product);
             cartItem.setQuantity(cartItemDto.getQuantity());
-            cartItem.setPrice(price);
+            cartItem.setTotal_price(price);
             cartItem.setCart(cart);
 
             CartItem savedCartItem = this.saveCartItem(cartItem);
@@ -149,12 +147,12 @@ public class CartItemService {
     }
 
     public void calculatePriceAndUpdateDb(CartItem cartItem, CartItemUpdateDto cartItemUpdateDto) {
-        double oldItemPrice = cartItem.getPrice();
+        double oldItemPrice = cartItem.getTotal_price();
 
         // Yeni adetle ürün fiyatını güncelle
         cartItem.setQuantity(cartItemUpdateDto.getQuantity());
         double newItemPrice = cartItemUpdateDto.getQuantity() * cartItem.getProduct().getPrice();
-        cartItem.setPrice(newItemPrice);
+        cartItem.setTotal_price(newItemPrice);
 
         // Sepetin toplam fiyatını güncelle
         Cart cart = cartItem.getCart();

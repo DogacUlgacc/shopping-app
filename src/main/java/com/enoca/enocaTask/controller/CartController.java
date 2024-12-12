@@ -16,10 +16,10 @@ public class CartController {
     }
 
     /*
-    * Kullanıcının sahip olduğu Id ile cartın Id değerleri aynı oluyor Her kullanıcı oluşturulduğunda DB' de o kullanıcı
-    * için bir adet de cart oluşturuluyor. Bu method ile kullanıcı kendi cart'ında bulanan productları ,fiyatları ve adetleri
-    * görebiliyor.
-    */
+     * Kullanıcının sahip olduğu Id ile cartın Id değerleri aynı oluyor Her kullanıcı oluşturulduğunda DB' de o kullanıcı
+     * için bir adet de cart oluşturuluyor. Bu method ile kullanıcı kendi cart'ında bulanan productları ,fiyatları ve adetleri
+     * görebiliyor.
+     */
     @GetMapping("/{cartId}/items")
     public ResponseEntity<List<CartItemDto>> getCart(@PathVariable Long cartId) {
         List<CartItemDto> itemsInCartDto = cartService.getCartItems(cartId);
@@ -30,10 +30,10 @@ public class CartController {
     }
 
     /*
-    * Bu kısmı Customer silinirken kullanıyoruz. emptyCart() cartItem classında!
-    */
+     * Bu kısmı Customer silinirken kullanıyoruz. emptyCart() cartItem classında!
+     */
     @DeleteMapping("{cartId}")
-    public void deleteCart(@PathVariable Long cartId){
+    public void deleteCart(@PathVariable Long cartId) {
         cartService.deleteCart(cartId);
     }
 }

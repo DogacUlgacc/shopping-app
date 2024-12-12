@@ -2,13 +2,13 @@ package com.enoca.enocaTask.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "cart_items")
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem extends BaseEntity {
@@ -24,55 +24,11 @@ public class CartItem extends BaseEntity {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "price")
-    private double price;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Column(name = "total_price")
+    private double total_price;
 
     @JsonIgnore
     public Cart getCart() {
         return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 }

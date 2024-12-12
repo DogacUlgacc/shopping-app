@@ -44,7 +44,7 @@ public class CartService {
             CartItemDto cartItemDto = new CartItemDto(
                     cartItem.getId(),
                     cartItem.getQuantity(),
-                    cartItem.getPrice(),
+                    cartItem.getTotal_price(),
                     cartItem.getProduct().getName()
             );
             itemsInCartDto.add(cartItemDto);
