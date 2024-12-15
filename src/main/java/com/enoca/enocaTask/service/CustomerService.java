@@ -6,7 +6,9 @@ import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,12 +43,12 @@ public class CustomerService {
     }
 
     public Customer updateUser(Long userId, CustomerDto newUser) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(userId);
-        if (optionalCustomer.isEmpty()) {
-            throw new EntityNotFoundException("Customer with ID " + userId + " not found");
-        }
-        Customer updateCustomer = optionalCustomer.get();
+        Customer updateCustomer = customerRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer with ID " + userId + " not found"));
+        // Müşteri bulunduysa bilgilerini güncelle
         updateCustomer.setEmail(newUser.getEmail());
+        // Güncellenmiş müşteriyi veritabanına kaydet
         return customerRepository.save(updateCustomer);
     }
 
