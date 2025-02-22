@@ -28,6 +28,15 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
+    @GetMapping("/sort")
+    public List<ProductDto> sortProductWithLimit(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "1") int limit
+    ) {
+        return productService.getProductsWithRequestParam(sort, limit);
+    }
+
+
     /*
      * Yeni Product oluşturur ve DB'ye kaydeder.
      * */

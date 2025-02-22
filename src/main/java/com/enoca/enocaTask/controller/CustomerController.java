@@ -1,12 +1,9 @@
 package com.enoca.enocaTask.controller;
 
 import com.enoca.enocaTask.dto.CustomerDto;
-import com.enoca.enocaTask.entity.Cart;
 import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.service.CartService;
 import com.enoca.enocaTask.service.CustomerService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

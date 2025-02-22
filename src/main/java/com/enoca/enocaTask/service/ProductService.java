@@ -10,7 +10,10 @@ import com.enoca.enocaTask.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,6 +35,39 @@ public class ProductService {
 
     public Product getProductById(Long productId) {
         return productRepository.findById(productId).orElse(null);
+    }
+
+    public List<ProductDto> getProductsWithRequestParam(String sort, int limit) {
+        List<Product> products = productRepository.findAll();
+
+        List<ProductDto> productDtos = products.stream()
+                .map(product -> new ProductDto(
+                        product.getName(),
+                        product.getPrice(),
+                        product.getQuantity()
+                        ))
+                .collect(Collectors.toList());
+
+        if (sort != null) {
+            switch (sort.toLowerCase()) {
+                case "price":
+                    productDtos.sort(Comparator.comparing(ProductDto::getPrice));
+                    break;
+                case "name":
+                    productDtos.sort(Comparator.comparing(ProductDto::getName));
+                    break;
+                default:
+                    // Geçersiz sıralama parametresi durumunda bir şey yapma
+                    break;
+            }
+        }
+
+        // Limit uygulama
+        if (productDtos.size() > limit) {
+            productDtos = productDtos.subList(0, limit);
+        }
+
+        return productDtos;
     }
 
     public Product addProduct(Product product) {
@@ -73,4 +109,6 @@ public class ProductService {
         productRepository.deleteById(productId);
 
     }
+
 }
+
