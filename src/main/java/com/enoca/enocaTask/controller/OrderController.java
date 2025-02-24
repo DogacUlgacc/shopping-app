@@ -4,6 +4,7 @@ import com.enoca.enocaTask.entity.*;
 
 import com.enoca.enocaTask.service.OrderService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,11 @@ public class OrderController {
     * Bütün Orderlar return edliyor.
     * */
     @GetMapping("/all")
-    public ResponseEntity<List<Order>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<Page<Order>> getAllOrders(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return ResponseEntity.ok(orderService.getAllOrders(page,size));
     }
 
 

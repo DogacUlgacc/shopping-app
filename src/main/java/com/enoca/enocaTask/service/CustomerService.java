@@ -6,6 +6,10 @@ import com.enoca.enocaTask.entity.Customer;
 import com.enoca.enocaTask.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,8 +27,9 @@ public class CustomerService {
         this.cartService = cartService;
     }
 
-    public List<Customer> getAllUsers() {
-        return customerRepository.findAll();
+    public Page<Customer> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        return customerRepository.findAll(pageable);
     }
 
     public Customer getUserById(Long userId) {

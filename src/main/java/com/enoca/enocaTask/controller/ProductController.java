@@ -4,6 +4,7 @@ import com.enoca.enocaTask.dto.ProductDto;
 import com.enoca.enocaTask.entity.Product;
 import com.enoca.enocaTask.service.ProductService;
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public List<Product> getAllProduct() {
-        return productService.getAllProducts();
+    public Page<Product> getAllProduct(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "5") int size) {
+        return productService.getAllProducts(page, size);
     }
 
     @GetMapping("/{productId}")
@@ -35,7 +37,6 @@ public class ProductController {
     ) {
         return productService.getProductsWithRequestParam(sort, limit);
     }
-
 
     /*
      * Yeni Product oluşturur ve DB'ye kaydeder.

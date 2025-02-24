@@ -8,9 +8,12 @@ import com.enoca.enocaTask.repository.CartItemRepository;
 import com.enoca.enocaTask.repository.CartRepository;
 import com.enoca.enocaTask.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,8 +32,10 @@ public class ProductService {
         this.cartRepository = cartRepository;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        return productRepository.findAll(pageable);
+
     }
 
     public Product getProductById(Long productId) {

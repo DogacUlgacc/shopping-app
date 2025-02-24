@@ -3,6 +3,10 @@ package com.enoca.enocaTask.service;
 import com.enoca.enocaTask.entity.*;
 import com.enoca.enocaTask.repository.*;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,8 +27,9 @@ public class OrderService {
         this.cartItemService = cartItemService;
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Order> getAllOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return orderRepository.findAll(pageable);
     }
 
     public String placeOrder(Long cartId) {
