@@ -11,6 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,13 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CustomerService {
+public class CustomerService implements UserDetailsService {
     private final CustomerRepository customerRepository;
     private final CartService cartService;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository, CartService cartService) {
+    public CustomerService(CustomerRepository customerRepository, CartService cartService, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.cartService = cartService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Page<Customer> getAllUsers(int page, int size) {
@@ -37,6 +43,7 @@ public class CustomerService {
     }
 
     public Customer addCustomer(Customer customer) {
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         Customer addedUser = customerRepository.save(customer);
         Cart cart = new Cart();
         cart.setCustomer(addedUser); // Müşteriye sepeti ata
@@ -45,6 +52,10 @@ public class CustomerService {
         // Alışveriş sepetini veritabanına ekle
         cartService.addCart(cart);
         return customerRepository.getReferenceById(customer.getId());
+
+        /*
+        * BURAYA RETURN OLARAK addedUser'da dönülebilir daha sonra checkle!
+        * */
     }
 
     public Customer updateUser(Long userId, CustomerDto newUser) {
@@ -56,10 +67,21 @@ public class CustomerService {
         // Güncellenmiş müşteriyi veritabanına kaydet
         return customerRepository.save(updateCustomer);
     }
-
+  /*
+    METHOD GÜNCELLENDİ!
+   */
     @Transactional
     public void deleteUserById(Long userId) {
+        Customer customer = customerRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
         cartService.deleteCart(userId);
-        customerRepository.deleteById(userId);
+        customerRepository.delete(customer);
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return customerRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
 }
