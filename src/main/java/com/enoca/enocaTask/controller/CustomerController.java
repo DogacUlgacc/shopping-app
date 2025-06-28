@@ -7,8 +7,6 @@ import com.enoca.enocaTask.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
